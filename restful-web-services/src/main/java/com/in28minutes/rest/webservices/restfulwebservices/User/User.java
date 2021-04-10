@@ -36,6 +36,10 @@ public class User {
 		return "User [id=" + id + ", name=" + name + ", birthDate=" + birthDate + "]";
 	}
 
+	protected User() {
+
+	}
+
 	public User(Integer id, String name, Date birthDate) {
 		super();
 		this.id = id;
