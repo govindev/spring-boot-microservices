@@ -30,6 +30,9 @@ public class UserJPAResource {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private PostRepository postRepository;
+
 	// GET /users
 	// retrieveAllUsers
 	@GetMapping("/jpa/users")
@@ -62,6 +65,16 @@ public class UserJPAResource {
 	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
 		userRepository.deleteById(id);
+	}
+
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrieveAllPosts(@PathVariable int id) {
+		Optional<User> userOptional = userRepository.findById(id);
+		if (!userOptional.isPresent()) {
+			throw new UserNotFoundException("id-" + id);
+		}
+		List<Post> posts = userOptional.get().getPosts();
+		return posts;
 	}
 
 }
