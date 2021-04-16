@@ -3,6 +3,7 @@ package com.in28minutes.microservices.currencyconversionservice;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,25 @@ public class CurrencyConversionController {
 		CurrencyConversion currencyConversion = responseEntity.getBody();
 		return new CurrencyConversion(currencyConversion.getId(), from, to, quantity,
 				currencyConversion.getConversionMultiple(),
-				quantity.multiply(currencyConversion.getConversionMultiple()), currencyConversion.getEnvironment());
+				quantity.multiply(currencyConversion.getConversionMultiple()),
+				currencyConversion.getEnvironment() + "from rets template ");
 
 //		return new CurrencyConversion(1001, from, to, quantity, BigDecimal.ONE, BigDecimal.ONE, "");
+	}
+
+	@Autowired
+	private CurrencyExchangeProxy proxy;
+
+	@GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
+	public CurrencyConversion retrieveConversionFeign(@PathVariable String from, @PathVariable String to,
+			@PathVariable BigDecimal quantity) {
+
+		CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
+		return new CurrencyConversion(currencyConversion.getId(), from, to, quantity,
+				currencyConversion.getConversionMultiple(),
+				quantity.multiply(currencyConversion.getConversionMultiple()),
+				currencyConversion.getEnvironment() + "from feign");
+
 	}
 
 }
